@@ -1,6 +1,6 @@
 (function () {
 
-    var s = Snap(1024/2, 768/2);
+    var s = Snap("#svg");
 
     var entities = [];
 

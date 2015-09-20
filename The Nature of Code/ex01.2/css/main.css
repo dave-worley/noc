@@ -56,8 +56,11 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
-svg {
-    border: 10px solid #ccc;
+#svg {
+    margin: 1em auto;
+    width: 512px;
+    height: 384px;
+    border: 1px solid #ccc;
 }
 
 
