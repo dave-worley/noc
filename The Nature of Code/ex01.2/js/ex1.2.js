@@ -5,8 +5,8 @@
     var entities = [];
 
     var createCircle = function (radius, border, color, borderColor) {
-        var sz = radius + border;
-        var circle = s.circle(radius * 2, radius * 2, radius).attr({
+        var sz = radius + (border/2);
+        var circle = s.circle(Math.floor(s.node.clientWidth/2), Math.floor(s.node.clientHeight/2), radius).attr({
             stroke: borderColor,
             "stroke-width": border,
             fill: color
@@ -33,7 +33,20 @@
         return circle;
     };
 
-    entities.push(createCircle(50, 2, "rgba(255, 255, 0, 1)", "rgba(255, 0, 0, 1)"));
+    var newrgb = function () {
+        return "rgba(" 
+            + _.random(0, 255) + ", " 
+            + _.random(0, 255)  +  ", " 
+            + _.random(0, 255) + ", "
+            + _.random(0.01, 1)  +")";
+    };
+    var randomCircle = function () {
+        return createCircle(_.random(15, 100), _.random(0, 15), newrgb(), newrgb());
+    };
+
+    _.each(_.range(12), function () {
+        entities.push(randomCircle());
+    });
     
     var render = function () {
         requestAnimationFrame(render);
@@ -44,14 +57,7 @@
     render();
 
     s.click(function () {
-        var newrgb = function () {
-            return "rgba(" 
-                + _.random(0, 255) + ", " 
-                + _.random(0, 255)  +  ", " 
-                + _.random(0, 255) + ", "
-                + _.random(0.01, 1)  +")";
-        };
-        entities.push(createCircle(_.random(15, 100), _.random(0, 15), newrgb(), newrgb()));
+        entities.push(randomCircle());
     });
 
 })();
