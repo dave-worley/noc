@@ -6,22 +6,31 @@
 
     var createCircle = function (radius, border, color, borderColor) {
         var sz = radius + (border/2);
-        var circle = s.circle(Math.floor(s.node.clientWidth/2), Math.floor(s.node.clientHeight/2), radius).attr({
+        var circle = s.circle(
+            Math.floor(s.node.clientWidth/2), 
+            Math.floor(s.node.clientHeight/2), 
+            radius
+        ).attr({
             stroke: borderColor,
             "stroke-width": border,
             fill: color
         });
-        circle.velocity = new Vector(_.random(-3, 5), _.random(-3, 5));
+        circle.velocity = new Victor(
+            _.random(-3, 5), 
+            _.random(-3, 5)
+        );
         circle.update = function () {
-            var p = new Vector(
+            var p = new Victor(
                 parseInt(this.attr("cx")),
                 parseInt(this.attr("cy"))
             );
             
-            if (p.x - sz <= 0 || p.x + sz >= s.node.clientWidth) {
+            if (p.x - sz <= 0 || 
+                p.x + sz >= s.node.clientWidth) {
                 this.velocity.x *= -1;
             }
-            if (p.y - sz <= 0 || p.y + sz >= s.node.clientHeight) { 
+            if (p.y - sz <= 0 || 
+                p.y + sz >= s.node.clientHeight) { 
                 this.velocity.y *= -1;
             }
             
