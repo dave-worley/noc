@@ -56,7 +56,7 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
-#snapnature {
+.svgexample {
     width: 512px;
     height: 384px;
     border: 1px solid #ccc;

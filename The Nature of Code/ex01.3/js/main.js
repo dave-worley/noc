@@ -1,61 +1,73 @@
 (function () {
-    /*
-
-      Wraps a Snap shape with an update function, some utilities and useful state.
-
-      entity: a Snap shape, group, text, etc.
-      update: a function called when rendering the shape
-      forces: a list of force vectors such as velocity, friction, wind, gravity, etc.
-
-    */
-
-    function AnimatedEntity (entity, forces) {
-        this.e = entity;
-        this.forces = forces;
-        return this;
-    };
-    AnimatedEntity.prototype.update = function () {
-        var self = this;
-        _.each(forces, function (force) {
-            self.updatePosition();
-        });
-        return this;
-    };
-    AnimatedEntity.prototype.updatePosition = function (nv) { // expects a vector
-        if (!_.isUndefined(self.e.cx)) { // this is a circle
-            self.e.cx += nv.x;
-            self.e.cy += nv.y;
-        } else {
-            self.e.x += nv.x;
-            self.e.y += nv.y;
-        }
-        return this;
-    };
-
-    var s = Snap("#snapnature"),
+    
+    var s = Snap("#noc1-3"),
     entities = [],
-    createAnimatedEntity = function (entityList, shape) {
-        entityList.push(new AnimatedEntity(shape, function () {
-
-        }));
-    },
-    center = new Victor(
-        Math.floor(s.node.clientWidth/2), 
-        Math.floor(s.node.clientHeight/2)
-    ),
     newrgb = function () {
         return "rgba(" 
             + _.random(0, 255) + ", " 
             + _.random(0, 255)  +  ", " 
             + _.random(0, 255) + ", 1)";
     },
-    mousep = new Victor(0, 0),
+
+    // makes a list of randomized descending points
+    makeRandomPointList = function (amount) {
+
+        // since we're demonstrating subtraction
+        // we start in the bottom right corner
+        var points = [
+            new Victor(
+                s.node.clientWidth, 
+                s.node.clientHeight
+            )
+        ];
+        
+        _.each(_.range(amount), function (n) {
+            if (n > 0) {
+                var randv = new Victor(
+                    (n * _.random(1, 12) + n), 
+                    (n * _.random(1, 12) + n)
+                ),
+                newp = points[n - 1].clone();
+
+                // the whole example here! 
+                // subtract the the random vector from the previous one's clone
+                // since we started at the bottom right corner
+                // this will climb back up towards the upper left hand corner
+                return points.push(newp.subtract(randv));
+            }
+            return;
+        });
+
+        return points;
+    },
     render = function () {
         requestAnimationFrame(render);
-        _.each(entities, function (entity) {
-            entity.update();
-        });
+        
+        // we use flatten over a list of lists of [x,y] points
+        // makes working with polyline a little easier
+        var flatpoints = _.flatten(
+            _.map(makeRandomPointList(10), function (point, i, pts) {
+                // we want the last one to be 0, 0
+                return i === pts.length - 1 ? [0, 0] : [point.x, point.y];
+            })
+        );
+
+        // we maintain an entity list so we can limit how many we have
+        entities.push(
+            s.polyline(flatpoints).attr({
+                fill: 'none',
+                stroke: newrgb(),
+                strokeWidth: _.random(1, 5)
+            })
+        );
+
+        // don't want too many!
+        if (entities.length > 50) {
+            entities[0].remove();
+            entities.shift();
+        }
+
     };
-    
+    render();
 
 })();
