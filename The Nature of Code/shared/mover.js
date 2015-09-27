@@ -6,7 +6,9 @@ function Mover (location, velocity, paper) {
         location.y, 
         _.random(10, 36)
     ).attr({
-        fill: this.randomRGB()
+        stroke: this.randomRGB(),
+        fill: 'none',
+        strokeWidth: _.random(3, 10)
     });
     this.boundary = new Victor(
         paper.node.clientWidth, 
