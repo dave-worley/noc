@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Vector Acceleration: The Nature of Code Using Snap.svg, Example 1.8</title>
+    <style type="text/css">
+        .svgexample {
+            width: 512px;
+            height: 384px;
+            border: 1px solid #ccc;
+            cursor: none;
+        }
+    </style>
+</head>
+<body>
+<svg id="ex1-8-fancy" class="svgexample"></svg>
+<p>Example 1.8 introduces vector acceleration. We need to change our Mover definition a little bit. The simplest Javascript example follows.</p>
+<pre>
+function Mover (location, velocity, paper) {
+    this.location = location;
+    this.velocity = velocity;
+    // this is our new force
+    this.acceleration = new Victor(-0.001, 0.01);
+    // we'll use this to limit the speed of each Mover
+    this.topSpeed = 10;
+    this.shape = paper.circle(
+        location.x,
+        location.y,
+        16
+    );
+    this.boundary = new Victor(
+        paper.node.clientWidth,
+        paper.node.clientHeight
+    );
+    this.display();
+};
+Mover.prototype.update = function () {
+    // acceleration is how much velocity speeds up
+    this.velocity.add(this.acceleration);
+    // Victor's limit is a little different from the Processing version
+    // we'll reduce it by 25% whenever it gets to the top speed
+    this.velocity.limit(this.topSpeed, 0.75);
+    this.location.add(this.velocity);
+    this.display();
+    this.checkEdges();
+};
+Mover.prototype.display = function () {
+    this.shape.attr({
+        cx: this.location.x,
+        cy: this.location.y
+    });
+};
+Mover.prototype.checkEdges = function () {
+    var that = this;
+    _.each(['x', 'y'], function (axis) {
+        if (that.location[axis] > that.boundary[axis]) {
+            that.location[axis] = 0;
+        } else if (that.location[axis] < 0) {
+            that.location[axis] = that.boundary[axis];
+        }
+    });
+};
+</pre>
+<p>We can use this Mover to create the simple example 1.8, and the following Javascript.</p>
+<pre>
+(function () {
+    var s = Snap('#ex1-8');
+    var stage = [];
+    var m = new SimpleMover(new Victor(100, 100), new Victor(-1, 1), s);
+    stage.push(m);
+    var render = function () {
+        requestAnimationFrame(render);
+        _.each(stage, function (entity) {
+            entity.update();
+        });
+    };
+    render();
+})();
+</pre>
+<svg id="ex1-8" class="svgexample"></svg>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+<script src="../shared/victor.js"></script>
+<script src="js/mover.js"></script>
+<script src="js/simpleMover.js"></script>
+<script src="js/ex1.8.js"></script>
+<script src="js/ex1.8.fancy.js"></script>
+</body>
+</html>
