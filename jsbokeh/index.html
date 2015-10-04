@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Javascript Bokeh</title>
+    <style type="text/css">
+        .svgexample {
+            width: 512px;
+            height: 384px;
+            cursor: none;
+        }
+    </style>
+</head>
+<body>
+<svg id="js-bokeh" class="svgexample" style="border: 0 none;"></svg>
+<p>Bokeh is a term in photography that describes how pretty the blurry parts of a picture are. I saw a couple of pictures
+    with beautiful, abstract bokeh patterns and I realized I could create them dynamically using Snap.svg.</p>
+
+<p>To begin we'll just need Snap.svg and Lodash. I've been using Cloudflare's CDN lately:</p>
+<pre>
+&lt;script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg.js">&lt;/script>
+&lt;script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js">&lt;/script>
+</pre>
+
+<p>We don't really <em>need</em> Lodash but it makes life much easier. You'll see when we dig in to the script.</p>
+<p>Snap is initialized a couple different ways. The easiest is to create an SVG element on your page with an id.
+Pass that id to snap to create your paper.</p>
+<pre>
+    var s = Snap('#js-bokeh')
+</pre>
+<p>I find when working with Snap it's handy to have a reference to the stage size.</p>
+<pre>
+    stageSize = {
+        x: s.node.clientWidth,
+        y:s.node.clientHeight
+    }
+</pre>
+<p>We need some randomness to make this beautiful. The prettiest bokeh patterns have nice gradients in the background.
+We can create that effect easily using Snap.</p>
+<p>First let's make a function that gives us a random hex color. You can see that I've limited the return values to be
+rather light. This gives us a nice pastel background gradient that looks great with the pattern.</p>
+<pre>
+    randomHex = function () {
+        return Snap.rgb(
+            _.random(150, 255),
+            _.random(150, 255),
+            _.random(150, 255)
+        );
+    }
+</pre>
+<p>The rgb function and the lodash random function make that pretty simple. Now that we can create random colors we can
+write our gradient function. The string to make agradient is a little complicated. Luckily the lodash template function
+should make things clear.</p>
+<pre>
+    randomGradient = function () {
+        var compiled = _.template("L(0, 0, 0, <%= stageHeight %>)<%= topColor %>-<%= midColor %>:<%= gradientSplit %>-<%= bottomColor %>");
+        return s.gradient(compiled({
+            stageHeight: stageSize.y,
+            topColor: randomHex(),
+            midColor: randomHex(),
+            bottomColor: randomHex(),
+            gradientSplit: _.random(25, 75) // where our colors divide
+        }));
+    }
+</pre>
+<p>Great, now we just need something that creates the gradient and adds it to the paper as a background. We use a rectangle
+the same size as the stage as our background.</p>
+<pre>
+    randomGradientBackground = function () {
+        return s.rect(0, 0, stageSize.x, stageSize.y).attr({
+            fill: randomGradient()
+        });
+    }
+</pre>
+<p>It's getting a little fun now. We have the background. We need the actual bokeh pattern. We can use Snap's blur filter
+to get the effect we want.</p>
+<pre>
+    randomBokeh = function (count) {
+        return _.map(_.range(count), function () {
+            // random location, random size
+            var circle = s.circle(
+                _.random(0, stageSize.x),
+                _.random(0, stageSize.y),
+                _.random(1, 40)
+            );
+            if (_.random(0, 100) < 80) { // chance to blur
+                var blurval = _.random(1, 10);
+                var blur = s.filter(Snap.filter.blur(blurval, blurval));
+                circle.attr({
+                    filter: blur
+                });
+            }
+            circle.attr({
+                fill: 'white', // could be some fun effects that change colors!
+                fillOpacity: _.random(0.01, 0.40) // random opacity up to 40%
+            });
+            return circle;
+        });
+    }
+</pre>
+<p>This function will create a randomized stage full of bokeh. The blur and opacity are where the effect becomes pretty.</p>
+<p>There's lots of room for experimentation here!</p>
+<script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+<script src="js/bokeh.js"></script>
+</body>
+</html>
