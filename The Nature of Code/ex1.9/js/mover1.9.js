@@ -1,4 +1,4 @@
-function Mover (location, velocity, paper) {
+function Mover19 (location, velocity, paper) {
     this.location = location;
     this.velocity = velocity;
     this.acceleration = new Victor(-0.001, 0.001);
@@ -16,7 +16,7 @@ function Mover (location, velocity, paper) {
     );
     this.display();
 };
-Mover.prototype.update = function () {
+Mover19.prototype.update = function () {
     var upperbound = new Victor(-1, -1);
     var lowerbound = new Victor(1, 1);
     this.acceleration = new Victor(0, 0).randomize(upperbound, lowerbound);
@@ -27,13 +27,13 @@ Mover.prototype.update = function () {
     this.location.add(this.velocity);
     this.display();
 };
-Mover.prototype.display = function () {
+Mover19.prototype.display = function () {
     this.shape.attr({
         cx: this.location.x,
         cy: this.location.y
     });
 };
-Mover.prototype.checkEdges = function () {
+Mover19.prototype.checkEdges = function () {
     var that = this;
     _.each(['x', 'y'], function (axis) {
         var r = parseInt(that.shape.attr('r'));
@@ -49,14 +49,14 @@ Mover.prototype.checkEdges = function () {
         }
     });
 };
-Mover.prototype.randomRGB = function () {
+Mover19.prototype.randomRGB = function () {
     return "rgba("
         + _.random(0, 255) + ", "
         + _.random(0, 255)  +  ", "
         + _.random(0, 255) + ", "
         + 1 + ")";
 };
-Mover.prototype.bounce = function (axis) {
+Mover19.prototype.bounce = function (axis) {
     this.velocity[axis] *= -1;
     this.acceleration[axis] *= -1;
 };
