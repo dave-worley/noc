@@ -52,9 +52,9 @@ rather light. This gives us a nice pastel background gradient that looks great w
 write our gradient function. The string to make agradient is a little complicated. Luckily the lodash template function
 should make things clear.</p>
 <pre>
+    gradientTemplate = _.template("L(0, 0, 0, <%= stageHeight %>)<%= topColor %>-<%= midColor %>:<%= gradientSplit %>-<%= bottomColor %>"),
     randomGradient = function () {
-        var compiled = _.template("L(0, 0, 0, <%= stageHeight %>)<%= topColor %>-<%= midColor %>:<%= gradientSplit %>-<%= bottomColor %>");
-        return s.gradient(compiled({
+        return s.gradient(gradientTemplate({
             stageHeight: stageSize.y,
             topColor: randomHex(),
             midColor: randomHex(),

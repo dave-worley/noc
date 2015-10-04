@@ -11,9 +11,9 @@
                 _.random(150, 255)
             );
         },
+        gradientTemplate = _.template("L(0, 0, 0, <%= stageHeight %>)<%= topColor %>-<%= midColor %>:<%= gradientSplit %>-<%= bottomColor %>"),
         randomGradient = function () {
-            var compiled = _.template("L(0, 0, 0, <%= stageHeight %>)<%= topColor %>-<%= midColor %>:<%= gradientSplit %>-<%= bottomColor %>");
-            return s.gradient(compiled({
+            return s.gradient(gradientTemplate({
                 stageHeight: stageSize.y,
                 topColor: randomHex(),
                 midColor: randomHex(),
