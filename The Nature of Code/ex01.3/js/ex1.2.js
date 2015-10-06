@@ -1,12 +1,16 @@
 (function () {
 
-    var s = Snap("#snapnature");
+    var s = Snap("#snapnature"),
+        stageSize = {
+            x: s.node.clientWidth || s.node.parentNode.clientWidth,
+            y: s.node.clientHeight || s.node.parentNode.clientHeight
+        };
 
     var entities = [];
 
     var createCircle = function (radius, border, color, borderColor) {
         var sz = radius + (border/2);
-        var circle = s.circle(Math.floor(s.node.clientWidth/2), Math.floor(s.node.clientHeight/2), radius).attr({
+        var circle = s.circle(Math.floor(stageSize.x/2), Math.floor(stageSize.y/2), radius).attr({
             stroke: borderColor,
             "stroke-width": border,
             fill: color
@@ -18,10 +22,10 @@
                 parseInt(this.attr("cy"))
             );
             
-            if (p.x - sz <= 0 || p.x + sz >= s.node.clientWidth) {
+            if (p.x - sz <= 0 || p.x + sz >= stageSize.x) {
                 this.velocity.x *= -1;
             }
-            if (p.y - sz <= 0 || p.y + sz >= s.node.clientHeight) { 
+            if (p.y - sz <= 0 || p.y + sz >= stageSize.y) {
                 this.velocity.y *= -1;
             }
             

@@ -9,11 +9,11 @@ function SimpleMover (location, velocity, paper) {
         16
     );
     this.boundary = new Victor(
-        paper.node.clientWidth,
-        paper.node.clientHeight
+        paper.node.clientWidth || paper.node.parentNode.clientWidth,
+        paper.node.clientHeight || paper.node.parentNode.clientHeight
     );
     this.display();
-};
+}
 SimpleMover.prototype.update = function () {
     this.velocity.add(this.acceleration);
     this.velocity.limit(this.topSpeed, 0.75);

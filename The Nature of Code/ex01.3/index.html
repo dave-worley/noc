@@ -1,23 +1,123 @@
-<!doctype html>
-<html class="no-js" lang="">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Zen Lab - The Nature of Code Using Three.js, Example 1.3</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<div class="svgexample">
+  <svg id="noc1-3" class="svgexample"></svg>
+</div>
 
-    <link rel="stylesheet" href="css/normalize.min.css">
-    <link rel="stylesheet" href="css/main.css">
+<p>This is a great example of the subtle differences between programming environments. Our version of exercise 1.3 wouldn't need any vector subtraction so I decided to make something a little more fancy.</p>
 
-  </head>
-  <body id="container">
-    <svg id="ex1-5" class="svgexample"></svg>
-    
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
-    <script src="../shared/victor.js"></script>
-    <script src="js/lib/mover.js"></script>
-    <script src="js/ex1.5.js"></script>
-  </body>
-</html>
+<p>This is what <a href="http://natureofcode.com/book/chapter-1-vectors/#_vector_subtraction">the actual example 1.3</a> would look like in Snap.svg.</p>
+
+<pre>
+(function () {
+    var s = Snap("#ex1-3-simple"),
+    center = new Victor(
+        Math.floor(s.node.clientWidth/2), 
+        Math.floor(s.node.clientHeight/2)
+    ),
+    line = s.line(
+        center.x,
+        center.y,
+        0,
+        0
+    ).attr({
+        stroke: "red",
+        strokeWidth: 5,
+        strokeLinecap: "round"
+    });
+    s.mousemove(function (event) {
+        line.attr({
+            x2: event.offsetX,
+            y2: event.offsetY
+        });
+    });
+})();
+</pre>
+
+<p>No math necessary. This is what is looks like.</p>
+
+<div class="svgexample">
+  <svg class="svgexample" id="ex1-3-simple"></svg>
+</div>
+
+<p>That wouldn't make for a fancy blog post. Likewise, <a href="http://natureofcode.com/book/chapter-1-vectors/#_vector_multiplication">example 1.4 is a little too simple for a separate post.</a></p>
+
+<pre>
+(function () {
+    var s = Snap("#ex1-4"),
+    center = new Victor(
+        Math.floor(s.node.clientWidth/2), 
+        Math.floor(s.node.clientHeight/2)
+    ),
+    line = s.line(
+        0,
+        0,
+        center.x,
+        center.y
+    ).attr({
+        stroke: "red",
+        strokeWidth: 5,
+        strokeLinecap: "round"
+    });
+    s.mousemove(function (event) {
+        var eventPoint = new Victor(event.offsetX, event.offsetY);
+        var half = new Victor(0.5, 0.5);
+        eventPoint.multiply(half);
+        line.attr({
+            x2: eventPoint.x,
+            y2: eventPoint.y
+        });
+    });
+})();
+</pre>
+
+<p>Looks like this.</p>
+
+<div class="svgexample">
+  <svg id="ex1-4" class="svgexample"></svg>
+</div>
+
+<p><a href="http://natureofcode.com/book/chapter-1-vectors/#chapter01_example5">Example 1.5 shows magnitude.</a> Our version needs to calculate the length vector because our origin point won't be (0, 0).</p>
+
+<pre>
+(function () {
+    var s = Snap("#ex1-5"),
+    center = new Victor(
+        Math.floor(s.node.clientWidth/2), 
+        Math.floor(s.node.clientHeight/2)
+    ),
+    originPoint = new Victor(
+        s.node.clientWidth,
+        s.node.clientHeight
+    ),
+    line = s.line(
+        originPoint.x,
+        originPoint.y,
+        center.x,
+        center.y
+    ).attr({
+        stroke: "red",
+        strokeWidth: 5,
+        strokeLinecap: "round"
+    }),
+    rect = s.rect(0, 0, 0, 20);
+    s.mousemove(function (event) {
+        var eventPoint = new Victor(event.offsetX, event.offsetY),
+        lengthVector = eventPoint.clone().subtract(originPoint);
+        line.attr({
+            x2: eventPoint.x,
+            y2: eventPoint.y
+        });
+        rect.attr({
+            width: lengthVector.magnitude()
+        });
+    });
+})();
+</pre>
+
+<div class="svgexample">
+  <svg class="svgexample" id="ex1-5"></svg>
+</div>
+
+<script type="text/javascript" src="/static/js/ex1.3/ex1.3.js"></script>
+<script type="text/javascript" src="/static/js/ex1.3/ex01.3Simple.js"></script>
+<script type="text/javascript" src="/static/js/ex1.3/ex1.4.js"></script>
+<script type="text/javascript" src="/static/js/ex1.3/ex1.5.js"></script>

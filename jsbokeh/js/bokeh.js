@@ -1,8 +1,8 @@
 (function (_) {
     var s = Snap('#js-bokeh'),
         stageSize = {
-            x: s.node.clientWidth,
-            y:s.node.clientHeight
+            x: s.node.clientWidth || s.node.parentNode.clientWidth,
+            y: s.node.clientHeight || s.node.parentNode.clientHeight
         },
         randomHex = function () {
             return Snap.rgb(
@@ -60,6 +60,8 @@
                 c.remove();
             });
         };
+
+    console.log(s.node.getBoundingClientRect());
 
     s.click(function () {
         clearStage();

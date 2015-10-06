@@ -16,8 +16,8 @@
         // we start in the bottom right corner
         var points = [
             new Victor(
-                s.node.clientWidth, 
-                s.node.clientHeight
+                s.node.clientWidth || s.node.parentNode.clientWidth,
+                s.node.clientHeight || s.node.parentNode.clientHeight
             )
         ];
         
@@ -35,7 +35,6 @@
                 // this will climb back up towards the upper left hand corner
                 return points.push(newp.subtract(randv));
             }
-            return;
         });
 
         return points;

@@ -11,11 +11,11 @@ function Mover (location, velocity, paper) {
         strokeWidth: _.random(3, 10)
     });
     this.boundary = new Victor(
-        paper.node.clientWidth, 
-        paper.node.clientHeight
+        paper.node.clientWidth || paper.node.parentNode.clientWidth,
+        paper.node.clientHeight || paper.node.parentNode.clientHeight
     );
     this.display();
-};
+}
 Mover.prototype.update = function () {
     this.location.add(this.velocity);
     this.display();
