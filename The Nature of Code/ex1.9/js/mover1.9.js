@@ -14,13 +14,22 @@ function Mover19 (location, velocity, paper) {
         paper.node.clientWidth - parseInt(this.shape.attr('r')),
         paper.node.clientHeight - parseInt(this.shape.attr('r'))
     );
-    this.display();
-};
-Mover19.prototype.update = function () {
-    var upperbound = new Victor(-1, -1);
-    var lowerbound = new Victor(1, 1);
-    this.acceleration = new Victor(0, 0).randomize(upperbound, lowerbound);
 
+    // the randomize function in Victor needs
+    // an upper left and lower right boundary
+    this.accelerationBoundary = [
+        new Victor(-1, -1),
+        new Victor(1, 1)
+    ];
+    this.display();
+}
+Mover19.prototype.update = function () {
+    // Victor requires you to randomize an existing vector
+    this.acceleration.randomize(this.accelerationBoundary[0], this.accelerationBoundary[1]);
+
+    // our new bounce edge detection
+    // we check edges first so the location,
+    // acceleration, and velocity can be modified before moving
     this.checkEdges();
     this.velocity.add(this.acceleration);
     this.velocity.limit(this.topSpeed, 0.75);
@@ -34,20 +43,19 @@ Mover19.prototype.display = function () {
     });
 };
 Mover19.prototype.checkEdges = function () {
-    var that = this;
     _.each(['x', 'y'], function (axis) {
-        var r = parseInt(that.shape.attr('r'));
-        if (that.location[axis] > that.boundary[axis] ||
-            that.location[axis] < r) {
-            that.bounce(axis);
+        var r = parseInt(this.shape.attr('r'));
+        if (this.location[axis] > this.boundary[axis] ||
+            this.location[axis] < r) {
+            this.bounce(axis);
         }
-        if (that.location[axis] > that.boundary[axis]) {
-            that.location[axis] = that.boundary[axis] - r;
+        if (this.location[axis] > this.boundary[axis]) {
+            this.location[axis] = this.boundary[axis] - r;
         }
-        if (that.location[axis] < r) {
-            that.location[axis] = r;
+        if (this.location[axis] < r) {
+            this.location[axis] = r;
         }
-    });
+    }, this);
 };
 Mover19.prototype.randomRGB = function () {
     return "rgba("
