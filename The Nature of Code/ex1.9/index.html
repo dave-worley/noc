@@ -13,13 +13,18 @@
     </style>
 </head>
 <body>
-<svg id="ex1-9-fancy" class="svgexample"></svg>
-<p>This is random acceleration. It's exactly the same as <a href="/vector-acceleration-the-nature-of-code-using-snap-svg-example-1-8/">the last example,</a>
-except we randomize the Mover's acceleration. I've also altered the edge detection to make the individual Movers bounce.</p>
+<div class="svgexample">
+    <svg id="ex1-9-fancy" class="svgexample"></svg>
+</div>
+<p>This is random acceleration. It's exactly the same as
+    <a href="/vector-acceleration-the-nature-of-code-using-snap-svg-example-1-8/">the last example,</a>
+    except we randomize the Mover's acceleration. I've also altered the edge detection to make the individual Movers
+    bounce.</p>
 
 <p>First we need a new property set in the constructor. The randomize function in Victor.js requires boundaries. We
-set them during object construction so we don't have to keep creating them every update. We use (-1, -1) and (1, 1) as
-our boundaries so the resulting vector is already normalized.</p>
+    set them during object construction so we don't have to keep creating them every update. We use (-1, -1) and (1, 1)
+    as
+    our boundaries so the resulting vector is already normalized.</p>
 <pre>
     function Mover (...) {
         // other code here
@@ -35,8 +40,9 @@ our boundaries so the resulting vector is already normalized.</p>
     }
 </pre>
 
-<p>Here's the modified update function in the Mover object that randomizes the acceleration. You can get a lot of mileage
-from a little randomness in your programs.</p>
+<p>Here's the modified update function in the Mover object that randomizes the acceleration. You can get a lot of
+    mileage
+    from a little randomness in your programs.</p>
 <pre>
 Mover.prototype.update = function () {
     this.acceleration.randomize(this.accelerationBoundary[0], this.accelerationBoundary[1]);
@@ -70,8 +76,10 @@ Mover.prototype.checkEdges = function () {
 };
 </pre>
 <p>What follows is the simple Example 1.9 using the code above. The more complex version at the top just creates
-more instances of the Mover.</p>
-<svg id="ex1-9" class="svgexample"></svg>
+    more instances of the Mover.</p>
+<div class="svgexample">
+    <svg id="ex1-9" class="svgexample"></svg>
+</div>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>

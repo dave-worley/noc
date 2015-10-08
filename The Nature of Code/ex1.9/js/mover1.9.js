@@ -10,9 +10,13 @@ function Mover19 (location, velocity, paper) {
     ).attr({
             fill: this.randomRGB()
         });
+    var stageSize = {
+        x: paper.node.clientWidth || paper.node.parentNode.clientWidth,
+        y: paper.node.clientHeight || paper.node.parentNode.clientHeight
+    };
     this.boundary = new Victor(
-        paper.node.clientWidth - parseInt(this.shape.attr('r')),
-        paper.node.clientHeight - parseInt(this.shape.attr('r'))
+        stageSize.x - parseInt(this.shape.attr('r')),
+        stageSize.y - parseInt(this.shape.attr('r'))
     );
 
     // the randomize function in Victor needs
