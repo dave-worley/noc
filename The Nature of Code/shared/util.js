@@ -1,10 +1,16 @@
 var utilities = {
-    randomRGB: function (lower, upper, alpha) {
+    rgba: function (r, g, b, a) {
+        //return _.template("rgba(<%= r %>, <%= g %>, <%= b %>, <%= a %>)").compile({
+        //    r: r,
+        //    g: g,
+        //    b: b,
+        //    a: a
+        //});
         return "rgba("
-            + _.random(lower, upper) + ", "
-            + _.random(lower, upper)  +  ", "
-            + _.random(lower, upper) + ", "
-            + alpha + ")";
+            + r + ", "
+            + g  +  ", "
+            + b + ", "
+            + a + ")";
     },
     vector: function (x, y) {
         return new Victor(x, y);

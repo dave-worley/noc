@@ -5,6 +5,7 @@
     <title>Vector Acceleration: The Nature of Code Using Snap.svg, Example 1.10</title>
     <style type="text/css">
         .svgexample {
+            background-color: black;
             width: 512px;
             height: 384px;
         }
@@ -12,11 +13,261 @@
 </head>
 <body>
 <!--<div class="svgexample">-->
-    <!--<svg id="ex1-9-fancy" class="svgexample"></svg>-->
+<!--<svg id="ex1-9-fancy" class="svgexample"></svg>-->
 <!--</div>-->
 <div class="svgexample">
     <svg id="ex1-10" class="svgexample"></svg>
 </div>
+<p>The final example in The Nature of Code, Chapter 1 is acceleration towards the mouse. I'm also taking the opportunity
+    to illustrate an intuitive way to create and subclass objects in Javascript.</p>
+
+<p>Let's dive in and see how to make some dancing fireflies. This is a much more fun way to explore Javascript
+    subclassing than some "Here's How Prototype Inheritance Works" cliché with foo and bar and no imagination. Our
+    ability to control computers is a miracle but we spend so much time explaining how to do mundane shit you forget you
+    can actually make magic with this stuff.</p>
+
+<p>It's not just UI and MVC and CSS and Nodes and tags. That's all bullshit, really, isn't it? It's like mechanics that
+    do not make cool cars but just talk about their wrenches. It's like doctors with amazing surgical technique that
+    never actually operate on anyone but write articles about how to use scalpels held at 37 degrees rather than 45.</p>
+
+<pre>
+    var paper = Snap("#ex1-10");
+</pre>
+
+<p>We start Snap like always, with an id. I'm probably going to use Paper.js for the next few exercises. SVG is great,
+    in the right circumstances. If you're doing thousands of entites performance becomes an issue, especially if you're
+    doing fancy alpha effects every update like I want to.</p>
+
+<p>That's not a condemnation of SVG or Snap at all. Both are fantastic and clearly have a lot of room for doing really
+    cool stuff. SVG is just not ideal for what I'm trying to do with this series. Paper also has an update model much
+    more similar to the Processing loop.</p>
+
+<pre>
+    var mousep = util.vector(0, 0);
+</pre>
+<p>I created a utilities.js file. I'm not 100% sold on Victor.js because it may be easier to write a Javascript version
+    of PVector. That would make this series a little easier to make, and closer to the book. For now I've just created
+    a function that takes an x, y pair and returns a Victor object. That way, later, I can pull out Victor and replace
+    it not seamlessly with the new Javascript PVector code.</p>
+
+<p>Here's that code.</p>
+<pre>
+    var utilities = {
+        rgba: function (r, g, b, a) {
+            return "rgba("
+                + r + ", "
+                + g  +  ", "
+                + b + ", "
+                + a + ")";
+        },
+        vector: function (x, y) {
+            return new Victor(x, y);
+        }
+    };
+</pre>
+<p>Take a look at the rgba function. We could also do that with Lodash.</p>
+<pre>
+    rgba: function (r, g, b, a) {
+        _.template("rgba(<%= r %>, <%= g %>, <%= b %>, <%= a %>)").compile({
+            r: r,
+            g: g,
+            b: b,
+            a: a
+        });
+    }
+</pre>
+<p>I don't like creating the dependency unless it provides a clear benefit. Lodash is great! Not needing Lodash would
+    be better.</p>
+<p>Now we're going to create a function that will return a Mover object instance. Here's the simple object creation I
+mentioned, with foo and bar and no imagination:</p>
+<pre>
+    var MyNewObjectMaker = function (initStuff, otherData) {
+        var private = "This variable will not be available outside this function, or in the returned object instance.";
+        return {
+            foo: initStuff,
+            whatever: otherData,
+            bar: function () {
+                console.log(this.foo + " " + this.whatever);
+            }
+        };
+    };
+    var easyInstance = MyNewObjectMaker("Hello", "World!");
+    easyInstance.bar();
+
+    var MyNewSubclass = function (initStuff, otherData) {
+        var n = MyNewObjectMaker(initStuff, otherData);
+        // use the dynamic nature of Javascript to your advantage, don't hide from it
+        n.bar = function () {
+            console.log(this.whatever + " " + this.foo);
+        };
+        return n;
+    };
+
+    var easySubclass = MyNewSubclass("Hello", "World!");
+    easySubclass.bar();
+</pre>
+<p>Lately I've been finding the whole prototype syntax overbearing. I just want to store a little state and maybe
+some functions to operate on that state. I don't want to write a contract with the browser I just want a bucket
+for things I can name. I find this much more flexible.</p>
+<p>So first we create the Mover constructor function.</p>
+<pre>
+    var Mover = function (paper) {};
+</pre>
+<p>I pass in an instance of the paper because in real life I'd probably put this in another file. This is for a blog,
+though, so I want everything together for clarity.</p>
+<p>Inside the Mover function we do a little work before we return our object.</p>
+<pre>
+    // get the stage size in a way Firefox won't crap out about
+    var psize = {
+        x: paper.node.clientWidth || paper.node.parentNode.clientWidth,
+        y: paper.node.clientHeight || paper.node.parentNode.clientHeight
+    };
+    // this is how we create nice, warm colors
+    var weightedRGB = function () {
+        return "rgba("
+            + _.random(200, 255) + ", "
+            + _.random(100, 200)  +  ", "
+            + _.random(0) + ", "
+            + 1 + ")";
+    };
+    // create a random location
+    var location = util.vector(_.random(0, psize.x), _.random(0, psize.y));
+</pre>
+<p>Now that we've got that out of the way we can get to our object definition. We return a literal because it's easy.</p>
+<pre>
+    return {
+        location: location,
+        velocity: util.vector(1, -1),
+        maxSpeed: 10,
+        shape: paper.circle(location.x, location.y, _.random(1, 5)).attr({
+            fill: weightedRGB(),
+            fillOpacity: _.random(0.1, 0.6)
+        }),
+        update: function () {
+            // base acceleration off of the mouse position
+            var direction = mousep.clone().subtract(this.location).normalize().multiply(util.vector(0.5, 0.5));
+            this.velocity.add(direction);
+            this.velocity.limit(this.maxSpeed, 0.9);
+            this.location.add(this.velocity);
+
+            // this is the flicker effect
+            // every update we change the opacity
+            // there's a 3% chance it will be opaque for one update
+            if (_.random(1, 100) < 4) {
+                this.shape.attr({
+                    fillOpacity: 1
+                });
+            } else {
+                this.shape.attr({
+                    fillOpacity: _.random(0.01, 0.6)
+                });
+            }
+            // bouncy!
+            this.checkEdges();
+            this.display();
+        },
+        checkEdges: function () {
+            var r = parseInt(this.shape.attr('r'));
+            _.each(['x', 'y'], function (axis) {
+                if (this.location[axis] > psize[axis] ||
+                    this.location[axis] < r) {
+                    this.bounce(axis);
+                }
+                if (this.location[axis] > psize[axis]) {
+                    this.location[axis] = psize[axis] - r;
+                }
+                if (this.location[axis] < r) {
+                    this.location[axis] = r;
+                }
+            }, this);
+        },
+        display: function () {
+            this.shape.attr({
+                cx: this.location.x,
+                cy: this.location.y
+            });
+        },
+        bounce: function (axis) {
+            this.velocity[axis] *= -1;
+            if (!_.isUndefined(this.acceleration)) {
+                this.acceleration[axis] *= -1;
+            }
+        }
+    };
+</pre>
+<p>Nothing we haven't seen before but the constructor is a little clearer. We don't have to use a new keyword
+and subclassing is intuitive.</p>
+<p>We don't want the thing sitting still when the user doesn't have their mouse over the SVG. We need a way to direct it
+that will look interesting while we wait for the user to interact. We can use the previous example of random acceleration
+to create a blank Mover that the others will follow.</p>
+<pre>
+    var CrazyMover = function (Mover) {
+        var CrazyMover = Mover(paper),
+            accelerationBoundary = [
+                util.vector(-1, -1),
+                util.vector(1, 1)
+            ];
+        // this one needs to keep track of acceleration
+        CrazyMover.acceleration = util.vector(0.001, 0.001);
+        // removes the shape from the DOM
+        CrazyMover.shape.remove();
+        // we don't want this one to move as fast
+        CrazyMover.maxSpeed = 5;
+        // should the other Movers follow this one?
+        CrazyMover.followMe = true;
+        // this is the random acceleration from the previous example
+        CrazyMover.update = function () {
+            this.acceleration.randomize(accelerationBoundary[0], accelerationBoundary[1]);
+            this.velocity.add(this.acceleration);
+            this.velocity.limit(this.maxSpeed, 0.9);
+            this.location.add(this.velocity);
+            this.checkEdges();
+            this.display();
+        };
+        return CrazyMover;
+    };
+</pre>
+<p>Now we're pretty much ready to go. We can create our stage and our crazy mover.</p>
+<pre>
+    var stage = _.map(_.range(80), function () {
+        return Mover(paper);
+    });
+    var crazy = CrazyMover(Mover);
+    stage.push(crazy);
+</pre>
+<p>Our render function, as always, uses requestAnimationFrame. The CrazyMover has a flag we set when the user mouses
+over the stage. If it's true we update the mousep vector with the CrazyMover's location.</p>
+<pre>
+    var render = function () {
+        requestAnimationFrame(render);
+        if (crazy.followMe) mousep = crazy.location;
+        _.each(stage, function (m) {
+            m.update();
+        });
+    };
+</pre>
+<p>The mouse handling code is really simple. When we mouseover, update the flag. When we mouseout update the flag again.</p>
+<p>When the mouse is over the stage we track the position with clientX and clientY. Getting the mouse position in a
+reliable, fully cross browser way is a bit of a pain. This way is plenty good enough for our purposes. In production
+you would want something more robust.</p>
+<pre>
+    paper.mousemove(function (evt) {
+        if (!crazy.followMe) {
+            mousep.x = evt.clientX;
+            mousep.y = evt.clientY;
+        }
+    });
+    paper.mouseover(function (evt) {
+        crazy.followMe = false;
+    });
+    paper.mouseout(function (evt) {
+        crazy.followMe = true;
+    });
+</pre>
+<p>Finally, we call render to start the show.</p>
+<pre>
+    render();
+</pre>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
