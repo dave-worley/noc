@@ -16,39 +16,26 @@
 <!--<svg id="ex1-9-fancy" class="svgexample"></svg>-->
 <!--</div>-->
 <div class="svgexample">
-    <svg id="ex1-10" class="svgexample"></svg>
+    <svg id="ex1-10-lines" class="svgexample"></svg>
 </div>
-<p>The final example in The Nature of Code, Chapter 1 is acceleration towards the mouse. I'm also taking the opportunity
-    to illustrate an intuitive way to create and subclass objects in Javascript.</p>
+<p>The final example in The Nature of Code, Chapter 1 is acceleration towards the mouse. I'm also taking the opportunity to illustrate an intuitive way to create and subclass objects in Javascript.</p>
 
-<p>Let's dive in and see how to make some dancing fireflies. This is a much more fun way to explore Javascript
-    subclassing than some "Here's How Prototype Inheritance Works" cliché with foo and bar and no imagination. Our
-    ability to control computers is a miracle but we spend so much time explaining how to do mundane shit you forget you
-    can actually make magic with this stuff.</p>
+<p>Let's dive in and see how to make some dancing fireflies. This is a much more fun way to explore Javascript subclassing than some "Here's How Prototype Inheritance Works" cliché with foo and bar and no imagination. Our ability to control computers is a miracle but we spend so much time explaining how to do mundane shit you forget you  can actually make magic with this stuff.</p>
 
-<p>It's not just UI and MVC and CSS and Nodes and tags. That's all bullshit, really, isn't it? It's like mechanics that
-    do not make cool cars but just talk about their wrenches. It's like doctors with amazing surgical technique that
-    never actually operate on anyone but write articles about how to use scalpels held at 37 degrees rather than 45.</p>
+<p>It's not just UI and MVC and CSS and Nodes and tags. That's all bullshit, really, isn't it? It's like mechanics that do not make cool cars but just talk about their wrenches. It's like doctors with amazing surgical technique that never actually operate on anyone but write articles about how to use scalpels held at 37 degrees rather than 45.</p>
 
 <pre>
     var paper = Snap("#ex1-10");
 </pre>
 
-<p>We start Snap like always, with an id. I'm probably going to use Paper.js for the next few exercises. SVG is great,
-    in the right circumstances. If you're doing thousands of entites performance becomes an issue, especially if you're
-    doing fancy alpha effects every update like I want to.</p>
+<p>We start Snap like always, with an id. I'm probably going to use Paper.js for the next few exercises. SVG is great, in the right circumstances. If you're doing thousands of entites performance becomes an issue, especially if you're doing fancy alpha effects every update like I want to.</p>
 
-<p>That's not a condemnation of SVG or Snap at all. Both are fantastic and clearly have a lot of room for doing really
-    cool stuff. SVG is just not ideal for what I'm trying to do with this series. Paper also has an update model much
-    more similar to the Processing loop.</p>
+<p>That's not a condemnation of SVG or Snap at all. Both are fantastic and clearly have a lot of room for doing really cool stuff. SVG is just not ideal for what I'm trying to do with this series. Paper also has an update model much more similar to the Processing loop.</p>
 
 <pre>
     var mousep = util.vector(0, 0);
 </pre>
-<p>I created a utilities.js file. I'm not 100% sold on Victor.js because it may be easier to write a Javascript version
-    of PVector. That would make this series a little easier to make, and closer to the book. For now I've just created
-    a function that takes an x, y pair and returns a Victor object. That way, later, I can pull out Victor and replace
-    it not seamlessly with the new Javascript PVector code.</p>
+<p>I created a utilities.js file. I'm not 100% sold on Victor.js because it may be easier to write a Javascript version of PVector. That would make this series a little easier to make, and closer to the book. For now I've just created a function that takes an x, y pair and returns a Victor object. That way, later, I can pull out Victor and replace it not seamlessly with the new Javascript PVector code.</p>
 
 <p>Here's that code.</p>
 <pre>
@@ -76,10 +63,8 @@
         });
     }
 </pre>
-<p>I don't like creating the dependency unless it provides a clear benefit. Lodash is great! Not needing Lodash would
-    be better.</p>
-<p>Now we're going to create a function that will return a Mover object instance. Here's the simple object creation I
-mentioned, with foo and bar and no imagination:</p>
+<p>I don't like creating the dependency unless it provides a clear benefit. Lodash is great! Not needing Lodash would be better.</p>
+<p>Now we're going to create a function that will return a Mover object instance. Here's the simple object creation I mentioned, with foo and bar and no imagination:</p>
 <pre>
     var MyNewObjectMaker = function (initStuff, otherData) {
         var private = "This variable will not be available outside this function, or in the returned object instance.";
@@ -106,15 +91,12 @@ mentioned, with foo and bar and no imagination:</p>
     var easySubclass = MyNewSubclass("Hello", "World!");
     easySubclass.bar();
 </pre>
-<p>Lately I've been finding the whole prototype syntax overbearing. I just want to store a little state and maybe
-some functions to operate on that state. I don't want to write a contract with the browser I just want a bucket
-for things I can name. I find this much more flexible.</p>
+<p>Lately I've been finding the whole prototype syntax overbearing. I just want to store a little state and maybe some functions to operate on that state. I don't want to write a contract with the browser I just want a bucket for things I can name. I find this much more flexible.</p>
 <p>So first we create the Mover constructor function.</p>
 <pre>
     var Mover = function (paper) {};
 </pre>
-<p>I pass in an instance of the paper because in real life I'd probably put this in another file. This is for a blog,
-though, so I want everything together for clarity.</p>
+<p>I pass in an instance of the paper because in real life I'd probably put this in another file. This is for a blog, though, so I want everything together for clarity.</p>
 <p>Inside the Mover function we do a little work before we return our object.</p>
 <pre>
     // get the stage size in a way Firefox won't crap out about
@@ -195,11 +177,8 @@ though, so I want everything together for clarity.</p>
         }
     };
 </pre>
-<p>Nothing we haven't seen before but the constructor is a little clearer. We don't have to use a new keyword
-and subclassing is intuitive.</p>
-<p>We don't want the thing sitting still when the user doesn't have their mouse over the SVG. We need a way to direct it
-that will look interesting while we wait for the user to interact. We can use the previous example of random acceleration
-to create a blank Mover that the others will follow.</p>
+<p>Nothing we haven't seen before but the constructor is a little clearer. We don't have to use a new keyword and subclassing is intuitive.</p>
+<p>We don't want the thing sitting still when the user doesn't have their mouse over the SVG. We need a way to direct it that will look interesting while we wait for the user to interact. We can use the previous example of random acceleration to create a blank Mover that the others will follow.</p>
 <pre>
     var CrazyMover = function (Mover) {
         var CrazyMover = Mover(paper),
@@ -235,8 +214,7 @@ to create a blank Mover that the others will follow.</p>
     var crazy = CrazyMover(Mover);
     stage.push(crazy);
 </pre>
-<p>Our render function, as always, uses requestAnimationFrame. The CrazyMover has a flag we set when the user mouses
-over the stage. If it's true we update the mousep vector with the CrazyMover's location.</p>
+<p>Our render function, as always, uses requestAnimationFrame. The CrazyMover has a flag we set when the user mouses over the stage. If it's true we update the mousep vector with the CrazyMover's location.</p>
 <pre>
     var render = function () {
         requestAnimationFrame(render);
@@ -247,14 +225,12 @@ over the stage. If it's true we update the mousep vector with the CrazyMover's l
     };
 </pre>
 <p>The mouse handling code is really simple. When we mouseover, update the flag. When we mouseout update the flag again.</p>
-<p>When the mouse is over the stage we track the position with clientX and clientY. Getting the mouse position in a
-reliable, fully cross browser way is a bit of a pain. This way is plenty good enough for our purposes. In production
-you would want something more robust.</p>
+<p>When the mouse is over the stage we track the position with offsetX and offsetY. Getting the mouse position in a reliable, fully cross browser way is a bit of a pain. This way is plenty good enough for our purposes. In production you would want something more robust.</p>
 <pre>
     paper.mousemove(function (evt) {
         if (!crazy.followMe) {
-            mousep.x = evt.clientX;
-            mousep.y = evt.clientY;
+            mousep.x = evt.offsetX;
+            mousep.y = evt.offsetY;
         }
     });
     paper.mouseover(function (evt) {
@@ -274,7 +250,7 @@ you would want something more robust.</p>
 <script src="../shared/victor.js"></script>
 <script src="../shared/util.js"></script>
 <!--<script src="js/mover1.10.js"></script>-->
-<script src="js/ex1.10.js"></script>
+<script src="js/ex1.10.lines.js"></script>
 <!--<script src="js/ex1.10.fancy.js"></script>-->
 </body>
 </html>
