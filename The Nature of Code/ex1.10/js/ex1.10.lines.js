@@ -109,8 +109,8 @@
 
     paper.mousemove(function (evt) {
         if (!crazy.followMe) {
-            mousep.x = evt.offsetX;
-            mousep.y = evt.offsetY;
+            mousep.x = _.isUndefined(evt.offsetX) ? evt.clientX : evt.offsetX;
+            mousep.y = _.isUndefined(evt.offsetY) ? evt.clientY : evt.offsetY;
         }
     });
     paper.mouseover(function (evt) {
