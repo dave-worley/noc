@@ -96,7 +96,7 @@
         return CrazyMover;
     };
 
-    var stage = _.map(_.range(80), function () {
+    var stage = _.map(_.range(20), function () {
         return Mover(paper);
     });
     var crazy = CrazyMover(Mover);
