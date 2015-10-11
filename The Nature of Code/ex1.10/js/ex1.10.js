@@ -9,7 +9,7 @@
     function Mover(paper) {
         this.location = util.vector(_.random(0, psize.x), _.random(0, psize.y));
         this.velocity = util.vector(1, -1);
-        this.maxSpeed = 10;
+        this.maxSpeed = _.random(6, 10);
         this.shape = paper.circle(
             this.location.x,
             this.location.y,
